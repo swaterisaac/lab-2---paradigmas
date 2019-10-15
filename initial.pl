@@ -29,6 +29,14 @@ deleteL2([],0,[]):-!.
 deleteL2([_|Xs],0,Xs):-!.
 deleteL2(L,N,R):- get(L,N,E),deleteL(L,E,R).
 
+%TDA Worm
+getPosX(Worm,X):- get(Worm,0,X).
+getPosY(Worm,Y):- get(Worm,1,Y).
+
+status(defeat).
+status(playing).
+status(win).
+
 scene(1,10,5,2,1,[10,5,playing,[1,1],[[9,1],[10,1]],[]]).
 scene(2,10,5,4,2,[10,5,playing,[1,1],[[7,1],[8,1],[9,1],[10,1]],[]]).
 scene(3,10,5,5,3,[10,5,playing,[1,1],[[6,1],[7,1],[8,1],[9,1],[10,1]],[]]).
@@ -37,6 +45,12 @@ scene(5,12,10,6,2,[12,10,playing,[1,1],[[7,1],[8,1],[9,1],[10,1],[11,1],[12,1]],
 scene(6,20,20,8,3,[20,20,playing,[1,1],[[13,1],[14,1],[15,1],[16,1],[17,1],[18,1],[19,1],[20,1]],[]]).
 
 createScene(N,M,E,D,_,Scene):-scene(_,M,N,E,D,Scene).
+
+
+checkScene1(Scene):- get(Scene,0,M),get(Scene,1,N),get(Scene,2,Status),
+					get(Scene,3,Player),get(Scene,4,Enemies),get(Scene,5,Bullet),
+					M >= 10, N >= 5, status(Status).
+
 
 %Reglas
 

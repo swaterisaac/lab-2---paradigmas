@@ -30,10 +30,16 @@ deleteL2([],0,[]):-!.
 deleteL2([_|Xs],0,Xs):-!.
 deleteL2(L,N,R):- get(L,N,E),deleteL(L,E,R).
 
-
+status(draw).
 status(defeat).
 status(playing).
 status(win).
+
+sceneStatus([M,N,_,0,[],Bullet],SceneOut):- SceneOut = [M,N,draw,0,[],Bullet].
+sceneStatus([M,N,_,0,[X|Xs],Bullet],SceneOut):- SceneOut = [M,N,defeat,0,[X|Xs],Bullet].
+sceneStatus([M,N,_,X,[],Bullet],SceneOut):- X > 0, SceneOut = [M,N,win,X,[],Bullet].
+sceneStatus([M,N,playing,Player,Enemies,Bullet],SceneOut):- SceneOut = [M,N,playing,Player,Enemies,Bullet].
+
 
 bullet([]).
 bullet([X,Y,_]):- X >= 1, Y >= 1.

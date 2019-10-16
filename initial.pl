@@ -15,6 +15,7 @@
 %deleteL(L,R,Lrel).
 %deleteL2(L,N,Lrel).
 %moveMember(SceneIn,Member,MoveDir,Seed,SceneOut)
+%shoot(SceneIn, Member, ShootType, Angle, Seed, SceneOut).
 
 %hechos
 get([],_,[]).
@@ -44,6 +45,8 @@ sceneStatus([M,N,playing,Player,Enemies,Bullet],SceneOut):- SceneOut = [M,N,play
 bullet([]).
 bullet([X,Y,_]):- X >= 1, Y >= 1.
 
+createAllyBullet(Scene,Angle,Bullet):- get(Scene,3,Player), Bullet = [Player,1,Angle].
+
 alcance(BulletIn,Distance):- get(BulletIn,0,X),get(BulletIn,2,Angle),AngleRad is pi*Angle/180,
 									Distance is round(X + 9*sin(2*AngleRad)).
 
@@ -51,6 +54,9 @@ worm(X):- X >= 1.
 
 comprobatePlayer(_,[]).
 comprobatePlayer(Player,[X|Xs]):- not(Player == X), comprobatePlayer(Player,Xs).
+
+comprobateBullet(Num,[Num|_],IndexEnemy).
+comprobateBullet(Num,[_|Xs],IndexEnemy):- member(Num,[_|Xs]),IndexEnemyNew is IndexEnemy + 1, comprobateBullet(Num,Xs,IndexEnemyNew).
 
 scene(1,10,5,2,1,[10,5,playing,1,[9,10],[]]).
 scene(2,10,5,4,2,[10,5,playing,1,[7,8,9,10],[]]).
@@ -78,6 +84,9 @@ moveMember(SceneIn,_,MoveDir,_,SceneOut):- get(SceneIn,0,M),get(SceneIn,1,N),get
 											get(SceneIn,3,Player),get(SceneIn,4,Enemies),get(SceneIn,5,Bullet),
 											Xnew is Player + MoveDir,SceneOut = [M,N,Status,Xnew,Enemies,Bullet],
 											checkScene(SceneOut).
+shoot(SceneIn,_,_,Angle,_,SceneOut):- createAllyBullet(SceneIn,Angle,Bullet), alcance(Bullet,D), get(SceneIn,4,Enemies),
+										not(member(D,Enemies)),SceneOut = SceneIn.
+%shoot(SceneIn,_,_,Angle,_,SceneOut):-
 											
 %Reglas
 

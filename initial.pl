@@ -38,7 +38,8 @@ status(win).
 bullet([]).
 bullet([X,Y,_]):- X >= 1, Y >= 1.
 
-
+alcance(BulletIn,Distance):- get(BulletIn,0,X),get(BulletIn,2,Angle),AngleRad is pi*Angle/180,
+									Distance is round(X + 9*sin(2*AngleRad)).
 
 worm(X):- X >= 1.
 

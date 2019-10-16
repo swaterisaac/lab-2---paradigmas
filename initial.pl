@@ -36,10 +36,10 @@ status(defeat).
 status(playing).
 status(win).
 
-sceneStatus([M,N,_,0,[],Bullet],SceneOut):- SceneOut = [M,N,draw,0,[],Bullet].
-sceneStatus([M,N,_,0,[X|Xs],Bullet],SceneOut):- SceneOut = [M,N,defeat,0,[X|Xs],Bullet].
-sceneStatus([M,N,_,X,[],Bullet],SceneOut):- X > 0, SceneOut = [M,N,win,X,[],Bullet].
-sceneStatus([M,N,playing,Player,Enemies,Bullet],SceneOut):- SceneOut = [M,N,playing,Player,Enemies,Bullet].
+sceneStatus([M,N,_,0,[],Bullet],SceneOut):- SceneOut = [M,N,draw,0,[],Bullet],!.
+sceneStatus([M,N,_,0,[X|Xs],Bullet],SceneOut):- SceneOut = [M,N,defeat,0,[X|Xs],Bullet],!.
+sceneStatus([M,N,_,X,[],Bullet],SceneOut):- X > 0, SceneOut = [M,N,win,X,[],Bullet],!.
+sceneStatus([M,N,playing,Player,Enemies,Bullet],SceneOut):- SceneOut = [M,N,playing,Player,Enemies,Bullet],!.
 
 
 bullet([]).
@@ -95,9 +95,25 @@ shoot(SceneIn,_,_,Angle,_,SceneOut):-	get(SceneIn,0,M),get(SceneIn,1,N),get(Scen
 										comprobateBullet(D,Enemies,Index),deleteL2(Enemies,Index,EnemiesNew),
 										sceneStatus([M,N,Status,Player,EnemiesNew,BulletX],SceneOut).
 										
-											
+										
+										
+fileString1(Scene,Ini,StringOut):- Ini is 1, fileString2(Scene,Ini,"").
+fileString2([M|Scene],M,StringOut).
+fileString2(Scene,Ini,StringOut):- get(Scene,3,Player),Ini is Player, string_concat(StringOut,"P",NewString),
+									NewIni is Ini + 1, fileString2(Scene,NewIni,NewString).
+fileString2(Scene,Ini,StringOut):- get(Scene,4,Enemies),member(Ini,Enemies),string_concat(StringOut,"E",NewString),
+									NewIni is Ini + 1, fileString2(Scene,NewIni,NewString).
+
+%fileString2(Scene,Ini,StringOut):- get(Scene,5,Bullet), get(Bullet,0,X), Ini is X, string_concat(StringOut,"=",NewString),
+%									NewIni is Ini + 1, fileString2(Scene,NewIni,NewString).
+fileString2(Scene,Ini,StringOut):- NewIni is Ini+1, string_concat(StringOut," ",NewString), fileString2(Scene,NewIni,NewString).
+
+fileString(Scene,StringOut):- fileString1(Scene,1,StringOut).											
 %Reglas
 
+
+%string_concat(String1,String2,Result).
+%number_string(Number,StringResult).
 
 
 

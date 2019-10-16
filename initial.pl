@@ -55,8 +55,9 @@ worm(X):- X >= 1.
 comprobatePlayer(_,[]).
 comprobatePlayer(Player,[X|Xs]):- not(Player == X), comprobatePlayer(Player,Xs).
 
-comprobateBullet(Num,[Num|_],IndexEnemy).
-comprobateBullet(Num,[_|Xs],IndexEnemy):- member(Num,[_|Xs]),IndexEnemyNew is IndexEnemy + 1, comprobateBullet(Num,Xs,IndexEnemyNew).
+
+comprobateBullet(Num,Lista,Index):- nth0(Index,Lista,Num).
+%comprobateBullet(Num,[X|Xs],IndexEnemy,IndexEnemyAnt):- member(Num,[X|Xs]),IndexEnemy is IndexEnemyAnt,IndexEnemyNew is IndexEnemy + 1,IndexEnemy is IndexEnemyNew, comprobateBullet(Num,Xs,IndexEnemyNew,IndexEnemy).
 
 scene(1,10,5,2,1,[10,5,playing,1,[9,10],[]]).
 scene(2,10,5,4,2,[10,5,playing,1,[7,8,9,10],[]]).
@@ -86,7 +87,14 @@ moveMember(SceneIn,_,MoveDir,_,SceneOut):- get(SceneIn,0,M),get(SceneIn,1,N),get
 											checkScene(SceneOut).
 shoot(SceneIn,_,_,Angle,_,SceneOut):- createAllyBullet(SceneIn,Angle,Bullet), alcance(Bullet,D), get(SceneIn,4,Enemies),
 										not(member(D,Enemies)),SceneOut = SceneIn.
-%shoot(SceneIn,_,_,Angle,_,SceneOut):-
+
+
+shoot(SceneIn,_,_,Angle,_,SceneOut):-	get(SceneIn,0,M),get(SceneIn,1,N),get(SceneIn,2,Status),get(SceneIn,3,Player),
+										get(SceneIn,4,Enemies),get(SceneIn,5,BulletX),
+										createAllyBullet(SceneIn,Angle,Bullet),alcance(Bullet,D),
+										comprobateBullet(D,Enemies,Index),deleteL2(Enemies,Index,EnemiesNew),
+										sceneStatus([M,N,Status,Player,EnemiesNew,BulletX],SceneOut).
+										
 											
 %Reglas
 

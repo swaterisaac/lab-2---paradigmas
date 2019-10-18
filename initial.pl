@@ -10,6 +10,12 @@
 
 %Lrel: Lista resultante después de haber hecho la operación correspondiente.
 
+%Status: Símbolo que puede ser win,defeat,playing o draw.
+%Player: Número entero que indica la coordenada en X de dónde se ubica el player.
+%Enemies: Lista de números enteros donde cada número representa un enemigo, que significa su coordenada en X.
+%Bullet: Lista que representa una bala.
+%Angle: Número entero del 0 al 360 que indica hacia donde apunta Bullet.
+%MoveDir: Número entero que indica cuánto se mueve el Player.
 
 %Predicados
 %scene(ID,M,N,E,D,Scene).
@@ -58,7 +64,7 @@
 %bullet: Comprueba si una bala es una bala.
 %nullbullet: Comprueba si una bala es su forma de [].
 %createAllyBullet: Crea una bala en un escenario dependiendo de la posición del player.
-%
+
 
 %Clausulas
 
@@ -122,6 +128,8 @@ trayectoria([X,Y,AngleX],BulletOut):-Angle is mod(AngleX,360), Angle =< 30, Ynew
 										BulletOut = [Xnew,Ynew,NewAngle].
 trayectoria([X,Y,AngleX],BulletOut):-Angle is mod(AngleX,360), Angle >= 270, Ynew is Y-1, NewAngle is Angle - 10,
 										BulletOut = [X,Ynew,NewAngle].
+trayectoria([X,Y,AngleX],BulletOut):-Angle is mod(AngleX,360), Ynew is Y-1, NewAngle is Angle - 20, Xnew is X - 1,
+										BulletOut = [Xnew,Ynew,NewAngle].
 
 worm(X):- X >= 1.
 

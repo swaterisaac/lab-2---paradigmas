@@ -27,20 +27,38 @@
 %status(Status).
 %sceneStatus(Scene,SceneOut).
 %bullet(Bullet).
+%nullbullet(Bullet).
 %createAllyBullet(Scene,Angle,Bullet).
 %alcance(Bullet,R).
-%shootINS(Scene,_,_,Angle,_,SceneOut).
+%shootINS(Scene,Member,ShooType,Angle,Seed,SceneOut).
 %trayectoria(BulletIn,BulletOut).
+%play(SceneIn, Member, MoveDir, ShootType, Angle, Seed, SceneOut).
+
+
 
 %Metas principales
 %createScene: Crea una escena a partir de la base de conocimiento (predicado scene).
 %checkScene: Nos dice si una escena es válida o no.
 %moveMember: Nos permite mover el jugador.
 %shoot: Permite inicializar un disparo.
+
+%shootINS: Nos dice la escena resultante después de haber disparado con cierto ángulo. Se podría considerar una meta secundaria
+%porque este predicado se ocupará en play. Pero a su vez es una versión más completa que shoot.
+
 %updateScene: Permite seguir actualizando la escena si es que hay una bala.
+%play: Permite hacer un turno completo por parte del player, pero el enemigo no interactua de ninguna forma.
 
 %Metas secundarias
-
+%get: Consigue el elemento N de una lista.
+%getSceneAlgo: Consigue el "algo" de la escena.
+%deleteL: Borra el elemento R de una lista.
+%deleteL2: Borra el elemento numero N de una lista.
+%status: Comprueba si es un estado posible (win, defeat,draw o playing).
+%sceneStatus: Actualiza el estado de una escena.
+%bullet: Comprueba si una bala es una bala.
+%nullbullet: Comprueba si una bala es su forma de [].
+%createAllyBullet: Crea una bala en un escenario dependiendo de la posición del player.
+%
 
 %Clausulas
 
@@ -159,7 +177,11 @@ updateScene(SceneIn,_,SceneOut):- getSceneM(SceneIn,M),getSceneN(SceneIn,N),getS
 									getScenePlayer(SceneIn,Player), getSceneEnemies(SceneIn,Enemies),SceneOut = [M,N,Status,Player,Enemies,[]],!.
 									
 
-					
+
+
+play(SceneIn,_,MoveDir,_,Angle,_, SceneOut):- moveMember(SceneIn,_,MoveDir,_,Scene1), shootINS(Scene1,_,_,Angle,_,SceneOut).
+
+%Intento de scene2string.
 /*fileString1(Scene,Ini,StringOut):- Ini is 1, fileString2(Scene,Ini,"").
 fileString2([M|_],M,"").
 fileString2(Scene,Ini,StringOut):- get(Scene,3,Player),Ini is Player, string_concat(StringOut,"P",NewString),
@@ -175,18 +197,46 @@ fileString(Scene,StringOut):- fileString1(Scene,1,StringOut).
 
 */
 
-%string_concat(String1,String2,Result).
-%number_string(Number,StringResult).
 
 
+%Ejemplos de uso:
+
+%CreateScene:
+
+%createScene(_,_,_,_,_,Scene). Todas las escenas.
+%createScene(_,10,_,_,_,Scene). Escena de suelo 10
+%createScene(_,_,4,_,_,Scene). Escena con 4 enemigos
+
+%checkScene:
+
+%scene(1,_,_,_,_,Scene),checkScene(Scene).
+%createScene(_,_,_,_,_,Scene),checkScene(Scene).
+%createScene(_,10,_,_,_,Scene),checkScene(Scene).
+
+%moveMember
+
+%scene(1,_,_,_,_,Scene),moveMember(Scene,_,3,_,SceneOut).
+%scene(1,_,_,_,_,Scene),moveMember(Scene,_,-1,_,SceneOut). (False, se sale de los límites).
+%scene(1,_,_,_,_,Scene), moveMember(Scene,_,200,_,SceneOut). (False, se sale de los límites).
+
+%shoot
+
+%scene(1,_,_,_,_,Scene),shoot(Scene,_,_,60,_,SceneOut).
+%scene(1,_,_,_,_,Scene),shoot(Scene,_,_,40,_,SceneOut).
+%scene(1,_,_,_,_,Scene),shoot(Scene,_,_,30,_,SceneOut).
+
+%updateScene
+
+%scene(1,_,_,_,_,Scene),shoot(Scene,_,_,60,_,Scene1),updateScene(Scene1,_,Scene2).
+%scene(1,_,_,_,_,Scene),shoot(Scene,_,_,60,_,Scene1),updateScene(Scene1,_,Scene2),updateScene(Scene2,_,Scene3).
+%scene(1,_,_,_,_,Scene),shoot(Scene,_,_,70,_,Scene1),updateScene(Scene1,_,Scene2),updateScene(Scene2,_,Scene3),updateScene(Scene3,_,Scene4),updateScene(Scene4,_,Scene5),updateScene(Scene5,_,Scene6),updateScene(Scene6,_,Scene7),updateScene(Scene7,_,Scene8),updateScene(Scene8,_,Scene9),updateScene(Scene9,_,Scene10).
+%El ejemplo de arriba mata a un enemigo.
 
 
-
-
-
-
-
-
+%play
+%scene(1,_,_,_,_,Scene),play(Scene,_,3,_,20,_,SceneOut).
+%scene(1,_,_,_,_,Scene),play(Scene,_,0,_,40,_,SceneOut).
+%scene(1,_,_,_,_,Scene),play(Scene,_,0,_,40,_,Scene1),play(Scene1,_,0,_,30,_,Scene2). Gana la partida.
 
 
 
